@@ -1,32 +1,70 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import { Searchbar } from 'react-native-paper'
 
+import { useLazyQuery } from '@apollo/client'
+import { Searchbar, Button } from 'react-native-paper'
+import { StyleSheet, View, Keyboard } from 'react-native'
+
+import { HomeNavigationProps } from '../../types'
+
+import { SEARCH_FOR_MOVIES } from '../../services/movie'
 import HeaderBar from '../../components/HeaderBar'
+import MovieList from '../../components/MovieList'
 
-export default function HomeScreen({ navigation }: any) {
+const Strings = {
+  title: 'Movie Catalogue',
+  searchButton: 'Search',
+}
+
+export default function HomeScreen({ navigation }: HomeNavigationProps) {
   const [searchQuery, setSearchQuery] = React.useState('')
 
   const onChangeSearch = (query: string) => setSearchQuery(query)
 
+  const [searchForMovies, { loading, data }] = useLazyQuery(SEARCH_FOR_MOVIES)
+
+  const handleSearchButtonPressed = () => {
+    searchForMovies({
+      variables: {
+        query: searchQuery,
+      },
+    })
+    Keyboard.dismiss()
+  }
+
+  let movieList = data?.search?.results
+
   return (
     <>
-      <HeaderBar title={'Movie Catalogue'} />
+      <HeaderBar title={Strings.title} />
       <View style={styles.container}>
-        <Text
-          onPress={() => {
-            navigation.jumpTo('Details', { title: 'Michaś' })
-          }}
-        >
-          Home Bicc
-        </Text>
         <Searchbar
-          style={{ width: '80%' }}
+          style={styles.searchBar}
           placeholder="Search"
           onChangeText={onChangeSearch}
+          onSubmitEditing={() => handleSearchButtonPressed()}
           value={searchQuery}
           autoFocus={false}
           blurOnSubmit={true}
+        />
+
+        <Button
+          color="#01b4e4"
+          mode="contained"
+          loading={loading}
+          style={styles.searchButton}
+          onPress={() => handleSearchButtonPressed()}
+        >
+          {Strings.searchButton}
+        </Button>
+
+        <MovieList
+          movieList={movieList}
+          onPressItem={({ id, title }: { id: string; title: string }) => {
+            navigation.jumpTo('Details', {
+              title,
+              movieId: id,
+            })
+          }}
         />
       </View>
     </>
@@ -36,8 +74,16 @@ export default function HomeScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#fff',
+    justifyContent: 'flex-start',
+  },
+  searchBar: {
+    width: '88%',
+    marginTop: '5%',
+  },
+  searchButton: {
+    width: '88%',
+    marginTop: '3%',
   },
 })

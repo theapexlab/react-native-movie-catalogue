@@ -3,16 +3,21 @@ import { StatusBar } from 'expo-status-bar'
 import { NavigationContainer } from '@react-navigation/native'
 import { enableScreens } from 'react-native-screens'
 
+import { ApolloProvider } from '@apollo/react-hooks'
+import apolloClient from './src/lib/apolloClient'
+
 import AppNavigation from './src/navigation/AppNavigation'
 
 export default function App() {
-  // For memory optimalization (https://reactnavigation.org/docs/react-native-screens/)
+  // NOTE: For memory optimalization purposes (https://reactnavigation.org/docs/react-native-screens/)
   enableScreens()
 
   return (
-    <NavigationContainer>
-      <AppNavigation />
-      <StatusBar />
-    </NavigationContainer>
+    <ApolloProvider client={apolloClient}>
+      <NavigationContainer>
+        <AppNavigation />
+        <StatusBar />
+      </NavigationContainer>
+    </ApolloProvider>
   )
 }

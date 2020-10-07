@@ -3,7 +3,7 @@ import { Appbar } from 'react-native-paper'
 
 type Props = {
   title: string
-  goBack?: any
+  goBack?: () => void
 }
 
 const HeaderBar: FunctionComponent<Props> = ({ title, goBack }) => {
