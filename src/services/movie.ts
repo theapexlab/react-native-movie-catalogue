@@ -1,9 +1,11 @@
 import _ from 'lodash'
 import gql from 'graphql-tag'
 import apolloClient from '../lib/apolloClient'
+import Constants from 'expo-constants';
 
-// Add your TMDB api key here
-const tmdbApiKey = ''
+// Adding default value in order to work inside test
+// Build / dev-env will fail unless the env var is specified
+const TMDBApiKey = Constants.manifest.extra?.TMDBApiKey || 'test'
 
 // Queries
 
@@ -14,7 +16,7 @@ export const SEARCH_FOR_MOVIES = gql`
         type: "Movies"
         method: "GET"
         endpoint: "tmdb"
-        path: "search/movie?api_key=${tmdbApiKey}&query={args.query}"
+        path: "search/movie?api_key=${TMDBApiKey}&query={args.query}"
       ) {
       results @type(name: "Movie") {
         id
@@ -35,7 +37,7 @@ export const GET_EXTERNAL_IDS = gql`
         type: "Ids"
         method: "GET"
         endpoint: "tmdb"
-        path: "movie/{args.movieId}/external_ids?api_key=${tmdbApiKey}"
+        path: "movie/{args.movieId}/external_ids?api_key=${TMDBApiKey}"
       ) {
       id
       imdb_id
@@ -50,7 +52,7 @@ export const GET_SIMILAR_MOVIES = gql`
         type: "SimilarMovies"
         method: "GET"
         endpoint: "tmdb"
-        path: "/movie/{args.movie_id}/similar?api_key=${tmdbApiKey}"
+        path: "/movie/{args.movie_id}/similar?api_key=${TMDBApiKey}"
       ) {
       results @type(name: "Movie") {
         id
@@ -99,7 +101,7 @@ export const getWikipediaTitleOptions = async (movieTitle: string) => {
   })
   const wikipediaTitleOptions = _.get(wikipediaOpenSearchData, ['wiki', '1'])
 
-  return wikipediaTitleOptions
+  return wikipediaTitleOptions as string[]
 }
 
 export const getWikipediaMovieExtract = async (movieTitle: string) => {
