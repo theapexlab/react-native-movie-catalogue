@@ -1,3 +1,8 @@
+// polyfill in order to apollo-link-rest work with node.js
+import { Headers } from "cross-fetch";
+// @ts-ignore
+global.Headers = global.Headers || Headers;
+
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { RestLink } from 'apollo-link-rest'
 

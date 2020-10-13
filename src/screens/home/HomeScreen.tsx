@@ -20,8 +20,7 @@ export default function HomeScreen({ navigation }: HomeNavigationProps) {
 
   const onChangeSearch = (query: string) => setSearchQuery(query)
 
-  const [searchForMovies, { loading, data }] = useLazyQuery(SEARCH_FOR_MOVIES)
-
+  const [searchForMovies, { called, loading, data }] = useLazyQuery(SEARCH_FOR_MOVIES)
   const handleSearchButtonPressed = () => {
     searchForMovies({
       variables: {
@@ -39,18 +38,19 @@ export default function HomeScreen({ navigation }: HomeNavigationProps) {
       <View style={styles.container}>
         <Searchbar
           style={styles.searchBar}
-          placeholder="Search"
+          placeholder="Movie name"
           onChangeText={onChangeSearch}
           onSubmitEditing={() => handleSearchButtonPressed()}
           value={searchQuery}
           autoFocus={false}
           blurOnSubmit={true}
+          testID='search-bar'
         />
 
         <Button
           color="#01b4e4"
           mode="contained"
-          loading={loading}
+          loading={called && loading}
           style={styles.searchButton}
           onPress={() => handleSearchButtonPressed()}
         >
