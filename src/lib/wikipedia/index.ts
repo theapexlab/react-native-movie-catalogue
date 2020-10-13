@@ -21,13 +21,18 @@ export const getWikipediaLinkAndDescription = async (
   let wikipediaMovieTitle
 
   // NOTE: The logic is based on these conventions: https://en.wikipedia.org/wiki/Wikipedia:Naming_conventions_(films)
+  // Let's try to find an exact match. Movie title + release year + film = instant win
   if (
     _.includes(wikipediaTitleOptions, `${movieTitle} (${releaseYear} film)`)
   ) {
     wikipediaMovieTitle = `${movieTitle} (${releaseYear} film)`
-  } else if (_.includes(wikipediaTitleOptions, `${movieTitle} (film)`)) {
+  }
+  // If there is only one movie with the given title
+  else if (_.includes(wikipediaTitleOptions, `${movieTitle} (film)`)) {
     wikipediaMovieTitle = `${movieTitle} (film)`
-  } else if (_.includes(wikipediaTitleOptions, movieTitle)) {
+  }
+  // Let's fall back to the first result. This may result in some falsy match, but this is a POC, so we hope it's okay 😇
+  else if (_.includes(wikipediaTitleOptions, movieTitle)) {
     wikipediaMovieTitle = wikipediaTitleOptions[0]
   }
 
